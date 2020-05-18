@@ -23,10 +23,19 @@ function picDelete(){
 </head>
 <body>
 <div class="card">
-	<div class="card-header">SpringBoot + MongoDB + Bootstrap4</div>
+	<div class="card-header">
+		<ul class="nav nav-tabs">
+			<li class="nav-item">
+				<a class="nav-link active" href="#">싱글이미지 게시판</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#">멀티이미지 게시판</a>
+			</li>
+		</ul>
+	</div>
 	<div class="card-body">
 		<div class="row">
-			<div class="col-sm-4">
+			<div class="col-lg-4">
 				<div class="card" style="min-height:500px;max-height:1000px">
 					<table class="table">
 						<thead>
@@ -48,7 +57,7 @@ function picDelete(){
 					</table>
 				</div>
 			</div>
-			<div class="col-sm-5">
+			<div class="col-lg-5">
 				<div class="card bg-light text-dark" style="min-height:500px;max-height:1000px">
 					<form action="">
 						<div class="form-group">
@@ -76,17 +85,16 @@ function picDelete(){
 							<button type="button" class="btn btn-default" onclick="cancel()">취소</button>
 							<button type="button" class="btn btn-default" onclick="del()">삭제</button>
 							<button type="button" class="btn btn-default" onclick="picDelete()">그림삭제</button>
-							
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-3">
+			<div class="col-lg-3">
 				<div class="card bg-light text-dark" style="min-height:500px;max-height:1000px">이미지 미리보기</div>
 			</div>
 		</div>
 	</div>
-	<div class="panel-footer"><a href="http://www.naver.com" target="_blank">깃허브 자료</a></div>
+	<div class="card-footer">SpringBoot 게시판 만들기</div>
 </div>
 </body>
 </html>
