@@ -13,6 +13,25 @@
 <script src="/js/jquery-3.5.1.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script type="text/javascript" language="javascript" defer="defer">
+$( document ).ready(function(){
+	list();
+});
+function list(){
+	$.ajax({
+			url : "<c:url value='/list.do'/>",
+			processDate : false,
+			contentType : false,
+			method : "GET",
+			cache : false,
+			data : ''
+		})
+		.done(function(data){
+			alert(data);
+		})
+		.fail(function(jqXHR, textStatus, errorThrown){
+			alert("오류:" : errorThrown);
+		});
+}
 function save(){
 	alert('save');
 }
