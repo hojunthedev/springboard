@@ -29,11 +29,34 @@ function list(){
 			alert(data);
 		})
 		.fail(function(jqXHR, textStatus, errorThrown){
-			alert("오류:" : errorThrown);
+			alert("오류");
 		});
 }
 function save(){
-	alert('save');
+	//alert('save');
+	//var formData = new FormData();
+	//formData.append('title', $('#title').value); //jquery의 
+	
+	$.ajax({
+			url : "<c:url value='/add.do'/>",
+			processDate : false,
+			contentType : false,
+			method : "POST",
+			cache : false,
+			//data : formData,
+			data : $('#form1').serialize()	//폼데이터 넘기는 법. #form1은 폼의 id
+		})
+		.done(function(data){
+			if(data.returnCode =='success'){
+				list();
+			}
+			else{
+				alert(data.returnCode);
+			}
+		})
+		.fail(function(jqXHR, textStatus, errorThrown){
+			alert("오류");
+		});
 }
 function cancel(){
 	alert('cancel');
@@ -84,7 +107,7 @@ function picDelete(){
 			</div>
 			<div class="col-lg-5">
 				<div class="card bg-light text-dark" style="min-height:500px;max-height:1000px">
-					<form action="">
+					<form id="form" name="form1" action="">
 						<div class="form-group">
 							<label class="control-label" for="title">제목</label>
 							<div>

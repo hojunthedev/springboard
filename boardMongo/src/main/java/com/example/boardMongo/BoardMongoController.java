@@ -1,6 +1,8 @@
 package com.example.boardMongo;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -38,6 +42,7 @@ public class BoardMongoController {
 	@RequestMapping("/list.do")
     @ResponseBody
 	public Map<String, Object> list() throws Exception {
+		System.out.println("list=========");
 		Map<String, Object> map = new HashMap<>();
 		List<Board> list = new ArrayList<Board>();
 		
@@ -45,6 +50,36 @@ public class BoardMongoController {
 		list = boardRepository.findAll();
 		
 		map. put("list", list);
+		return map;
+    }
+	
+	@RequestMapping(value="/add.do", method=RequestMethod.POST) //value 붙이고 이렇게 적으면 GET방식으로 받겠다. 안적으면 다받겠다.
+    @ResponseBody
+	public Map<String, Object> add(@RequestParam(value="title", required=true) String title, //required가 트루면 null비허용(에러발생)
+			@RequestParam(value="contents", required=false,defaultValue="") String contents) throws Exception {
+		System.out.println("add=========");
+		Map<String, Object> map = new HashMap<>();
+		List<Board> list = new ArrayList<Board>();
+		
+		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd hh:MM");
+		Date time = new Date();
+		String ymd = format1.format(time);
+		
+		try {
+			Board in = new Board();
+			in.setTitle(title);
+			in.setContents(contents);
+			in.setDate(ymd);
+			boardRepository.insert(in);
+			
+			map. put("returnCode", "success");
+			map. put("returnDesc", "정상적으로 등록되었습니다.");
+		}
+		catch(Exception e){
+			map. put("returnCode", "failed");
+			map. put("returnDesc", "문제가 있습니다.");
+		}
+
 		return map;
     } 
 }

@@ -21,7 +21,7 @@ public class Board {
 	public String getContentes() {
 		return contentes;
 	}
-	public void setContentes(String contentes) {
+	public void setContents(String contentes) {
 		this.contentes = contentes;
 	}
 	public String getDate() {
