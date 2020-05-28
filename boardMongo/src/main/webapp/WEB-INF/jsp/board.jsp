@@ -130,9 +130,9 @@ function picDelete(){
 					<div style="text-align:center">
 						<div class=btn-group>
 							<button type="button" class="btn btn-primary" onclick="save()">저장</button>
-							<button type="button" class="btn btn-default" onclick="cancel()">취소</button>
-							<button type="button" class="btn btn-default" onclick="del()">삭제</button>
-							<button type="button" class="btn btn-default" onclick="picDelete()">그림삭제</button>
+							<button type="button" class="btn btn-secondary" onclick="cancel()">취소</button>
+							<button type="button" class="btn btn-danger" onclick="del()">삭제</button>
+							<button type="button" class="btn btn-info" onclick="picDelete()">그림삭제</button>
 						</div>
 					</div>
 				</div>
