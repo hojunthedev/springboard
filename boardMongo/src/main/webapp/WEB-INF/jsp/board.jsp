@@ -19,39 +19,51 @@ $( document ).ready(function(){
 function list(){
 	$.ajax({
 			url : "<c:url value='/list.do'/>",
-			processDate : false,
+			processData : false,
 			contentType : false,
 			method : "GET",
 			cache : false,
 			data : ''
 		})
 		.done(function(data){
-			alert(data);
+			//alert(data.list.length);
+			$('#list').children().remove();
+			for(var i=0;i<data.list.length;i++)
+				{
+					var txt = "<tr>";
+					txt += "<td>" + data.list[i].title + "<span style=\"float:right\">" + data.list[i].date +"<td/>";
+					txt += "</tr>"
+					$('#list').append(txt);
+				}
 		})
 		.fail(function(jqXHR, textStatus, errorThrown){
 			alert("오류");
 		});
 }
 function save(){
-	//alert('save');
-	//var formData = new FormData();
-	//formData.append('title', $('#title').value); //jquery의 
+	alert('save');
+	//var formData = $('#form1').serialize();
+	//var $ = jQuery;
+	var formData = new FormData();
+	//formData.appen('title', this.refs.title.value);
+	formData.append('title', $('#title').val());  
+	formData.append('contents', $('#contents').val());
 	
 	$.ajax({
 			url : "<c:url value='/add.do'/>",
-			processDate : false,
+			processData : false, //0529 processDate -> processData
 			contentType : false,
 			method : "POST",
 			cache : false,
-			//data : formData,
-			data : $('#form1').serialize()	//폼데이터 넘기는 법. #form1은 폼의 id
+			data : formData
+			//data : $("#form1").serialize()	//폼데이터 넘기는 법. #form1은 폼의 id
 		})
 		.done(function(data){
 			if(data.returnCode =='success'){
 				list();
 			}
 			else{
-				alert(data.returnCode);
+				alert(data.returnDesc);
 			}
 		})
 		.fail(function(jqXHR, textStatus, errorThrown){
@@ -91,7 +103,7 @@ function picDelete(){
 								<th>게시물 리스트</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody id="list">
 							<tr>
 								<td>안녕하세요</td>
 							</tr>
@@ -107,7 +119,7 @@ function picDelete(){
 			</div>
 			<div class="col-lg-5">
 				<div class="card bg-light text-dark" style="min-height:500px;max-height:1000px">
-					<form id="form" name="form1" action="">
+					<form id="form1" name="form1" action="">
 						<div class="form-group">
 							<label class="control-label" for="title">제목</label>
 							<div>
@@ -121,9 +133,9 @@ function picDelete(){
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="control-label" for="contents">이미지 첨부</label>
+							<label class="control-label">이미지 첨부</label>
 							<div>
-								<input type="file" className="form-control" name="file" style="width:80%"/>
+								<input type="file" class="form-control" name="file" style="width:80%"/>
 							</div>
 						</div>
 					</form>

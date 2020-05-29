@@ -10,6 +10,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -59,8 +61,6 @@ public class BoardMongoController {
 			@RequestParam(value="contents", required=false,defaultValue="") String contents) throws Exception {
 		System.out.println("add=========");
 		Map<String, Object> map = new HashMap<>();
-		List<Board> list = new ArrayList<Board>();
-		
 		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd hh:MM");
 		Date time = new Date();
 		String ymd = format1.format(time);
@@ -72,12 +72,12 @@ public class BoardMongoController {
 			in.setDate(ymd);
 			boardRepository.insert(in);
 			
-			map. put("returnCode", "success");
-			map. put("returnDesc", "정상적으로 등록되었습니다.");
+			map.put("returnCode", "success");
+			map.put("returnDesc", "정상적으로 등록되었습니다.");
 		}
 		catch(Exception e){
-			map. put("returnCode", "failed");
-			map. put("returnDesc", "문제가 있습니다.");
+			map.put("returnCode", "failed");
+			map.put("returnDesc", "문제가 있습니다.");
 		}
 
 		return map;
