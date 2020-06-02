@@ -3,7 +3,7 @@ package com.example.boardMongo;
 public class Board {
 	private String id;
 	private String title;
-	private String contentes;
+	private String contents;
 	private String date;
 	private String fname;
 	public String getId() {
@@ -18,11 +18,11 @@ public class Board {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public String getContentes() {
-		return contentes;
+	public String getContents() {
+		return contents;
 	}
 	public void setContents(String contentes) {
-		this.contentes = contentes;
+		this.contents = contentes;
 	}
 	public String getDate() {
 		return date;

@@ -30,7 +30,7 @@ function list(){
 			$('#list').children().remove();
 			for(var i=0;i<data.list.length;i++)
 				{
-					var txt = "<tr>";
+					var txt = "<tr onclick=\"detail('"+data.list[i].title+"','"+data.list[i].contents+"');\">";
 					txt += "<td>" + data.list[i].title + "<span style=\"float:right\">" + data.list[i].date +"<td/>";
 					txt += "</tr>"
 					$('#list').append(txt);
@@ -39,6 +39,10 @@ function list(){
 		.fail(function(jqXHR, textStatus, errorThrown){
 			alert("오류");
 		});
+}
+function detail(title, contents){
+	alert(title);
+	alert(contents);
 }
 function save(){
 	alert('save');
