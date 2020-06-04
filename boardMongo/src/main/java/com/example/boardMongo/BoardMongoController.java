@@ -82,4 +82,62 @@ public class BoardMongoController {
 
 		return map;
     } 
+	
+	@RequestMapping(value="/mod.do", method=RequestMethod.POST) 
+    @ResponseBody
+	public Map<String, Object> mod(@RequestParam(value="id_hidden", required=true) String id, 
+			@RequestParam(value="title", required=true) String title,
+			@RequestParam(value="contents", required=false,defaultValue="") String contents) throws Exception {
+		System.out.println("mod=========");
+		Map<String, Object> map = new HashMap<>();
+				
+		try {
+			Query query = new Query();
+			Criteria activiryCriteria = Criteria.where("id").is(id);
+			query.addCriteria(activiryCriteria);
+			activiryCriteria = Criteria.where("title").is(title);
+			query.addCriteria(activiryCriteria);
+			List<Board> out = mongoTemplate.find(query, Board.class);
+			
+			if(out.size() > 0) {
+				Board in= out.get(0);
+				in.setTitle(title);
+				in.setContents(contents);
+				boardRepository.save(in);
+			}
+			
+			map.put("returnCode", "success");
+			map.put("returnDesc", "정상적으로 수정되었습니다.");
+		}
+		catch(Exception e){
+			map.put("returnCode", "failed");
+			map.put("returnDesc", "문제가 있습니다.");
+		}
+
+		return map;
+    } 
+	
+	@RequestMapping(value="/del.do", method=RequestMethod.POST) 
+    @ResponseBody
+	public Map<String, Object> del(@RequestParam(value="title", required=true) String title, 
+			@RequestParam(value="contents", required=false,defaultValue="") String contents) throws Exception {
+		System.out.println("del=========");
+		Map<String, Object> map = new HashMap<>();
+				
+		try {
+			Board in = new Board();
+			in.setTitle(title);
+			in.setContents(contents);
+			boardRepository.delete(in);
+			
+			map.put("returnCode", "success");
+			map.put("returnDesc", "정상적으로 삭제되었습니다.");
+		}
+		catch(Exception e){
+			map.put("returnCode", "failed");
+			map.put("returnDesc", "문제가 있습니다.");
+		}
+
+		return map;
+    } 
 }

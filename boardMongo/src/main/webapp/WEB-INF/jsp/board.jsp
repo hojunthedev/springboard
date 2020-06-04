@@ -30,7 +30,7 @@ function list(){
 			$('#list').children().remove();
 			for(var i=0;i<data.list.length;i++)
 				{
-					var txt = "<tr onclick=\"detail('"+data.list[i].title+"','"+data.list[i].contents+"');\">";
+					var txt = "<tr onclick=\"detail('"+data.list[i].id+"','"+data.list[i].title+"','"+data.list[i].contents+"');\">";
 					txt += "<td>" + data.list[i].title + "<span style=\"float:right\">" + data.list[i].date +"<td/>";
 					txt += "</tr>"
 					$('#list').append(txt);
@@ -40,9 +40,12 @@ function list(){
 			alert("오류");
 		});
 }
-function detail(title, contents){
-	alert(title);
-	alert(contents);
+function detail(id, title, contents){
+	//alert(title);
+	//alert(contents);
+	$('#id_hidden').val(id);
+	$('#title').val(title);
+	$('#contents').val(contents);
 }
 function save(){
 	alert('save');
@@ -52,9 +55,16 @@ function save(){
 	//formData.appen('title', this.refs.title.value);
 	formData.append('title', $('#title').val());  
 	formData.append('contents', $('#contents').val());
-	
+	var url = "<c:url value='/add.do'/>";
+
+	if($('#id_hidden').val() == ''){
+		break;
+	}else{
+		url = "<c:url value='/mod.do'/>";
+	}
+
 	$.ajax({
-			url : "<c:url value='/add.do'/>",
+			url : ,
 			processData : false, //0529 processDate -> processData
 			contentType : false,
 			method : "POST",
@@ -75,7 +85,8 @@ function save(){
 		});
 }
 function cancel(){
-	alert('cancel');
+	$('#title').val('');
+	$('#contents').val('');
 }
 function del(){
 	alert('delete');
@@ -142,6 +153,7 @@ function picDelete(){
 								<input type="file" class="form-control" name="file" style="width:80%"/>
 							</div>
 						</div>
+						<input type="hidden" id="id_hidden" name="id_hidden" />
 					</form>
 					<div style="text-align:center">
 						<div class=btn-group>
