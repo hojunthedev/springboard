@@ -58,13 +58,13 @@ function save(){
 	var url = "<c:url value='/add.do'/>";
 
 	if($('#id_hidden').val() == ''){
-		break;
+		//no
 	}else{
 		url = "<c:url value='/mod.do'/>";
 	}
 
 	$.ajax({
-			url : ,
+			url : url,
 			processData : false, //0529 processDate -> processData
 			contentType : false,
 			method : "POST",
