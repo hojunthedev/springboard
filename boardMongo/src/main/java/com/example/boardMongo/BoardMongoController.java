@@ -93,10 +93,10 @@ public class BoardMongoController {
 				
 		try {
 			Query query = new Query();
-			Criteria activiryCriteria = Criteria.where("id").is(id);
-			query.addCriteria(activiryCriteria);
-			activiryCriteria = Criteria.where("title").is(title);
-			query.addCriteria(activiryCriteria);
+			Criteria activityCriteria = Criteria.where("id").is(id);
+			query.addCriteria(activityCriteria);
+			activityCriteria = Criteria.where("title").is(title);
+			query.addCriteria(activityCriteria);
 			List<Board> out = mongoTemplate.find(query, Board.class);
 			
 			if(out.size() > 0) {
