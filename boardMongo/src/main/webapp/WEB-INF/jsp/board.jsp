@@ -30,7 +30,9 @@ function list(){
 			$('#list').children().remove();
 			for(var i=0;i<data.list.length;i++)
 				{
-					var txt = "<tr onclick=\"detail('"+data.list[i].id+"','"+data.list[i].title+"','"+data.list[i].contents+"');\">";
+					var contents = data.list[i].contents;
+					contents = contents.replace(/\n/gi, '\\n');
+					var txt = "<tr onclick=\"detail('"+data.list[i].id+"','"+data.list[i].title+"','"+contents+"');\">";
 					txt += "<td>" + data.list[i].title + "<span style=\"float:right\">" + data.list[i].date +"<td/>";
 					txt += "</tr>"
 					$('#list').append(txt);
@@ -43,22 +45,25 @@ function list(){
 function detail(id, title, contents){
 	//alert(title);
 	//alert(contents);
-	$('#id_hidden').val(id);
+	$('#id').val(id);
 	$('#title').val(title);
 	$('#contents').val(contents);
 }
 function save(){
-	alert('save');
+	//alert('save');
+	if(!confirm("저장 하시겠습니까?")){
+		return;
+	}
 	//var formData = $('#form1').serialize();
 	//var $ = jQuery;
 	var formData = new FormData();
-	//formData.appen('title', this.refs.title.value);
+	formData.append('id', $('#id').val());
 	formData.append('title', $('#title').val());  
 	formData.append('contents', $('#contents').val());
 	var url = "<c:url value='/add.do'/>";
 
-	if($('#id_hidden').val() == ''){
-		//no
+	if($('#id').val() == ''){
+		url = "<c:url value='/add.do'/>";
 	}else{
 		url = "<c:url value='/mod.do'/>";
 	}
@@ -89,7 +94,41 @@ function cancel(){
 	$('#contents').val('');
 }
 function del(){
-	alert('delete');
+	var url = "<c:url value='/del.do'/>";
+
+	if($('#id').val() == ''){
+		alert("삭제할 대상이 존재하지 않습니다.");
+		return;
+	}
+	if(!confirm("삭제 하시겠습니까?")){
+		return;
+	}
+	
+	var formData = new FormData();
+	formData.append('id', $('#id').val());
+	formData.append('title', $('#title').val());  
+	formData.append('contents', $('#contents').val());
+	
+	$.ajax({
+		url : "<c:url value='/del.do'/>",
+		processData : false, //0529 processDate -> processData
+		contentType : false,
+		method : "POST",
+		cache : false,
+		data : formData
+		//data : $("#form1").serialize()	//폼데이터 넘기는 법. #form1은 폼의 id
+	})
+	.done(function(data){
+		if(data.returnCode =='success'){
+			list();
+		}
+		else{
+			alert(data.returnDesc);
+		}
+	})
+	.fail(function(jqXHR, textStatus, errorThrown){
+		alert("오류");
+	});
 }
 function picDelete(){
 	alert('delete image');
@@ -153,7 +192,7 @@ function picDelete(){
 								<input type="file" class="form-control" name="file" style="width:80%"/>
 							</div>
 						</div>
-						<input type="hidden" id="id_hidden" name="id_hidden" />
+						<input type="hidden" id="id" name="id" />
 					</form>
 					<div style="text-align:center">
 						<div class=btn-group>
