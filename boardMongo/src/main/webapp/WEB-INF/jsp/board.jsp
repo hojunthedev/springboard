@@ -60,6 +60,8 @@ function save(){
 	formData.append('id', $('#id').val());
 	formData.append('title', $('#title').val());  
 	formData.append('contents', $('#contents').val());
+	formData.append('file', $('#file')[0].files[0]);
+
 	var url = "<c:url value='/add.do'/>";
 
 	if($('#id').val() == ''){
@@ -189,7 +191,7 @@ function picDelete(){
 						<div class="form-group">
 							<label class="control-label">이미지 첨부</label>
 							<div>
-								<input type="file" class="form-control" name="file" style="width:80%"/>
+								<input type="file" id="file" class="form-control" name="file" style="width:80%"/>
 							</div>
 						</div>
 						<input type="hidden" id="id" name="id" />

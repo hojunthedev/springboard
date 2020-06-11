@@ -1,5 +1,7 @@
 package com.example.boardMongo;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class BoardMongoController {
@@ -57,8 +61,11 @@ public class BoardMongoController {
 	
 	@RequestMapping(value="/add.do", method=RequestMethod.POST) //value 붙이고 이렇게 적으면 GET방식으로 받겠다. 안적으면 다받겠다.
     @ResponseBody
-	public Map<String, Object> add(@RequestParam(value="title", required=true) String title, //required가 트루면 null비허용(에러발생)
-			@RequestParam(value="contents", required=false,defaultValue="") String contents) throws Exception {
+	public Map<String, Object> 
+			add(
+			@RequestParam(value="title", required=true) String title, //required가 트루면 null비허용(에러발생)
+			@RequestParam(value="contents", required=false,defaultValue="") String contents,
+			@RequestParam(value="file", required=false,defaultValue="") MultipartFile file) throws Exception {
 		System.out.println("add=========");
 		Map<String, Object> map = new HashMap<>();
 		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd hh:MM");
@@ -66,9 +73,19 @@ public class BoardMongoController {
 		String ymd = format1.format(time);
 		
 		try {
+			String repository = env.getProperty("user.file.upload");
+			String fname="";
+			if(file != null && file.getSize() >0) {
+				fname = file.getOriginalFilename();
+				FileOutputStream fos = new FileOutputStream(new File(repository+File.separator+fname));
+				IOUtils.copy(file.getInputStream(), fos);
+				fos.close();
+			}
+			
 			Board in = new Board();
 			in.setTitle(title);
 			in.setContents(contents);
+			in.setFname(fname);
 			in.setDate(ymd);
 			boardRepository.insert(in);
 			
@@ -77,7 +94,7 @@ public class BoardMongoController {
 		}
 		catch(Exception e){
 			map.put("returnCode", "failed");
-			map.put("returnDesc", "문제가 있습니다.");
+			map.put("returnDesc", "add에 문제가 있습니다.");
 		}
 
 		return map;
@@ -88,12 +105,22 @@ public class BoardMongoController {
 	public Map<String, Object> mod(
 			@RequestParam(value="id", required=true) String id, 
 			@RequestParam(value="title", required=true) String title,
-			@RequestParam(value="contents", required=false,defaultValue="") String contents) throws Exception {
+			@RequestParam(value="contents", required=false,defaultValue="") String contents,
+			@RequestParam(value="file", required=false,defaultValue="") MultipartFile file)  throws Exception {
 		System.out.println("mod=========");
 		
 		Map<String, Object> map = new HashMap<>();
 				
 		try {
+			String repository = env.getProperty("user.file.upload");
+			String fname="";
+			if(file != null && file.getSize() >0) {
+				fname = file.getOriginalFilename();
+				FileOutputStream fos = new FileOutputStream(new File(repository+File.separator+fname));
+				IOUtils.copy(file.getInputStream(), fos);
+				fos.close();
+			}
+			
 			Query query = new Query();
 			Criteria activityCriteria = Criteria.where("id").is(id);
 			query.addCriteria(activityCriteria);
@@ -105,6 +132,7 @@ public class BoardMongoController {
 				Board in= out.get(0);	//한건 삭제
 				in.setTitle(title);
 				in.setContents(contents);
+				in.setFname(fname);
 				boardRepository.save(in);
 			}
 			map.put("returnCode", "success");
@@ -112,7 +140,7 @@ public class BoardMongoController {
 		}
 		catch(Exception e){
 			map.put("returnCode", "failed");
-			map.put("returnDesc", "문제가 있습니다.");
+			map.put("returnDesc", "mod에 문제가 있습니다.");
 		}
 
 		return map;
