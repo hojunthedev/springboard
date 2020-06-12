@@ -1,15 +1,22 @@
 package com.example.boardMongo;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tomcat.util.http.fileupload.IOUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+//import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -21,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.apache.commons.io.IOUtils;
 
 @Controller
 public class BoardMongoController {
@@ -178,4 +186,31 @@ public class BoardMongoController {
 
 		return map;
     } 
+	
+	@RequestMapping(value="/img.do")
+	@ResponseBody
+	public String getImageWithMediaType(
+			@RequestParam(value="fname", required=false, defaultValue="") String fname,
+			HttpServletRequest request, HttpServletResponse response) throws IOException {
+		System.out.println("img=======");
+		String repository= env.getProperty("user.file.upload");
+		
+		String base64Encoded = "";
+		if(fname.contains(",")) {
+			fname = fname.substring(0,fname.indexOf(","));
+		}
+		fname = repository+File.separator+fname;
+		System.out.println("dir:" + fname);
+		
+		File file = new File(fname);
+		if(file.exists() && file.isFile()) {
+			InputStream in = new FileInputStream(fname);
+			byte[] bytes = IOUtils.toByteArray(in);
+			byte[] encodeBase64 = Base64.getEncoder().encode(bytes);
+			base64Encoded = new String(encodeBase64, "UTF-8");
+ 		}
+		
+		return base64Encoded;
+	}
+			
 }

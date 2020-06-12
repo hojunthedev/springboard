@@ -32,7 +32,7 @@ function list(){
 				{
 					var contents = data.list[i].contents;
 					contents = contents.replace(/\n/gi, '\\n');
-					var txt = "<tr onclick=\"detail('"+data.list[i].id+"','"+data.list[i].title+"','"+contents+"');\">";
+					var txt = "<tr onclick=\"detail('"+data.list[i].id+"','"+data.list[i].title+"','"+contents+"','"+data.list[i].fname+"');\">";
 					txt += "<td>" + data.list[i].title + "<span style=\"float:right\">" + data.list[i].date +"<td/>";
 					txt += "</tr>"
 					$('#list').append(txt);
@@ -42,12 +42,35 @@ function list(){
 			alert("오류");
 		});
 }
-function detail(id, title, contents){
+function detail(id, title, contents, fname){
 	//alert(title);
 	//alert(contents);
 	$('#id').val(id);
 	$('#title').val(title);
 	$('#contents').val(contents);
+	$('#file').val("");
+
+	setTimeout(getImg(fname), 500);
+}
+function getImg(fname){
+	//var formData = new FormData();
+	//formData.append('fname', fname);
+	//get은 폼데이터가 안날아가는모양이에유
+	$.ajax({
+		url : "<c:url value='/img.do'/>?fname="+fname,
+		processData : false, //0529 processDate -> processData
+		contentType : false,
+		method : "GET",
+		cache : false,
+		data : ''//formData
+		//data : $("#form1").serialize()	//폼데이터 넘기는 법. #form1은 폼의 id
+	})
+	.done(function(data){
+		$('#img').attr("src", "data:image/jpeg;base64," + data);
+	})
+	.fail(function(jqXHR, textStatus, errorThrown){
+		alert("오류");
+	});
 }
 function save(){
 	//alert('save');
@@ -82,6 +105,7 @@ function save(){
 		.done(function(data){
 			if(data.returnCode =='success'){
 				list();
+				alert("정상적으로 저장되었습니다.");
 			}
 			else{
 				alert(data.returnDesc);
@@ -123,6 +147,7 @@ function del(){
 	.done(function(data){
 		if(data.returnCode =='success'){
 			list();
+			alert("정상적으로 삭제되었습니다.");
 		}
 		else{
 			alert(data.returnDesc);
@@ -207,7 +232,9 @@ function picDelete(){
 				</div>
 			</div>
 			<div class="col-lg-3">
-				<div class="card bg-light text-dark" style="min-height:500px;max-height:1000px">이미지 미리보기</div>
+				<div class="card bg-light text-dark" style="min-height:500px;max-height:1000px">
+					<img src="" id="img" alt="image" style="max-width:100%">
+				</div>
 			</div>
 		</div>
 	</div>
