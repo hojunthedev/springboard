@@ -53,6 +53,11 @@ public class BoardMongoController {
 		return "/board";
 	    } 
 	
+	@RequestMapping("/board2.do")
+    public String board2() throws Exception {
+	return "/board2";
+    } 
+	
 	@RequestMapping("/list.do")
     @ResponseBody
 	public Map<String, Object> list() throws Exception {

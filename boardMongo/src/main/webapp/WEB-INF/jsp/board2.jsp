@@ -167,10 +167,10 @@ function picDelete(){
 	<div class="card-header">
 		<ul class="nav nav-tabs">
 			<li class="nav-item">
-				<a class="nav-link active" href="<c:url value='/board.do'/>">싱글이미지 게시판</a>
+				<a class="nav-link" href="<c:url value='/board.do'/>">싱글이미지 게시판</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="<c:url value='/board2.do'/>">멀티이미지 게시판</a>
+				<a class="nav-link active" href="<c:url value='/board2.do'/>">멀티이미지 게시판</a>
 			</li>
 		</ul>
 	</div>
@@ -185,15 +185,6 @@ function picDelete(){
 							</tr>
 						</thead>
 						<tbody id="list">
-							<tr>
-								<td>안녕하세요</td>
-							</tr>
-							<tr>
-								<td>반갑습니다</td>
-							</tr>
-							<tr>
-								<td>그럼2만</td>
-							</tr>
 						</tbody>
 					</table>
 				</div>
