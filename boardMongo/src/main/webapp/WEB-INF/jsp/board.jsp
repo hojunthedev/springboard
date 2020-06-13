@@ -73,9 +73,7 @@ function getImg(fname){
 		//data : $("#form1").serialize()	//폼데이터 넘기는 법. #form1은 폼의 id
 	})
 	.done(function(data){
-		
 		$('#img').attr("src", "data:image/jpeg;base64," + data);
-		
 	})
 	.fail(function(jqXHR, textStatus, errorThrown){
 		alert("오류");
