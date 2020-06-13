@@ -26,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.commons.io.IOUtils;
@@ -78,7 +79,7 @@ public class BoardMongoController {
 			add(
 			@RequestParam(value="title", required=true) String title, //required가 트루면 null비허용(에러발생)
 			@RequestParam(value="contents", required=false,defaultValue="") String contents,
-			@RequestParam(value="file", required=false,defaultValue="") MultipartFile file) throws Exception {
+			@RequestPart(value="file", required=false) MultipartFile file) throws Exception {
 		System.out.println("add=========");
 		Map<String, Object> map = new HashMap<>();
 		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd hh:MM");
@@ -119,7 +120,7 @@ public class BoardMongoController {
 			@RequestParam(value="id", required=true) String id, 
 			@RequestParam(value="title", required=true) String title,
 			@RequestParam(value="contents", required=false,defaultValue="") String contents,
-			@RequestParam(value="file", required=false,defaultValue="") MultipartFile file)  throws Exception {
+			@RequestPart(value="file", required=false) MultipartFile file)  throws Exception {
 		System.out.println("mod=========");
 		
 		Map<String, Object> map = new HashMap<>();
@@ -192,6 +193,49 @@ public class BoardMongoController {
 		return map;
     } 
 	
+	@RequestMapping(value="/delImg.do", method=RequestMethod.POST) 
+    @ResponseBody
+	public Map<String, Object> delImg(
+			@RequestParam(value="id", required=true) String id, 
+			@RequestParam(value="title", required=true) String title, 
+			@RequestParam(value="contents", required=false,defaultValue="") String contents) throws Exception {
+		System.out.println("delImg=========");
+		Map<String, Object> map = new HashMap<>();
+				
+		try {
+			Query query = new Query();
+			Criteria activityCriteria = Criteria.where("id").is(id);
+			query.addCriteria(activityCriteria);
+			activityCriteria = Criteria.where("title").is(title);
+			query.addCriteria(activityCriteria);
+			List<Board> out = mongoTemplate.find(query, Board.class);
+			
+			if(out.size() > 0) {
+				Board in= out.get(0);	//한건 삭제
+				
+				String repository = env.getProperty("user.file.upload");
+				String fname= repository+File.separator+in.getFname();
+				File delFile = new File(fname);
+				
+				if(delFile.exists()) {
+					delFile.delete();
+				}
+				
+				in.setFname("");
+				boardRepository.save(in);
+			}
+			
+			map.put("returnCode", "success");
+			map.put("returnDesc", "정상적으로 삭제되었습니다.");
+		}
+		catch(Exception e){
+			map.put("returnCode", "failed");
+			map.put("returnDesc", "데이터 삭제에 실패했습니다.");
+		}
+
+		return map;
+    } 
+	
 	@RequestMapping(value="/img.do")
 	@ResponseBody
 	public String getImageWithMediaType(
@@ -213,6 +257,8 @@ public class BoardMongoController {
 			byte[] bytes = IOUtils.toByteArray(in);
 			byte[] encodeBase64 = Base64.getEncoder().encode(bytes);
 			base64Encoded = new String(encodeBase64, "UTF-8");
+			
+			in.close();
  		}
 		
 		return base64Encoded;

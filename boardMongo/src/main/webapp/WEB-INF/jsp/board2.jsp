@@ -36,6 +36,7 @@ function list(){
 					txt += "<td>" + data.list[i].title + "<span style=\"float:right\">" + data.list[i].date +"<td/>";
 					txt += "</tr>"
 					$('#list').append(txt);
+					
 				}
 		})
 		.fail(function(jqXHR, textStatus, errorThrown){
@@ -66,7 +67,12 @@ function getImg(fname){
 		//data : $("#form1").serialize()	//폼데이터 넘기는 법. #form1은 폼의 id
 	})
 	.done(function(data){
-		$('#img').attr("src", "data:image/jpeg;base64," + data);
+		if( data == "" ){	//액박처리, TODO:0613먹히지않음
+			$('#img').attr("src", "");
+		}
+		else{
+			$('#img').attr("src", "data:image/jpeg;base64," + data);
+		}
 	})
 	.fail(function(jqXHR, textStatus, errorThrown){
 		alert("오류");
@@ -158,7 +164,40 @@ function del(){
 	});
 }
 function picDelete(){
-	alert('delete image');
+	if($('#id').val() == ''){
+		alert("삭제할 대상이 존재하지 않습니다.");
+		return;
+	}
+	if(!confirm("그림을 삭제 하시겠습니까?")){
+		return;
+	}
+	
+	var formData = new FormData();
+	formData.append('id', $('#id').val());
+	formData.append('title', $('#title').val());  
+	formData.append('contents', $('#contents').val());
+	
+	$.ajax({
+		url : "<c:url value='/delImg.do'/>",
+		processData : false, //0529 processDate -> processData
+		contentType : false,
+		method : "POST",
+		cache : false,
+		data : formData
+		//data : $("#form1").serialize()	//폼데이터 넘기는 법. #form1은 폼의 id
+	})
+	.done(function(data){
+		if(data.returnCode =='success'){
+			list();
+			alert("정상적으로 삭제되었습니다.");
+		}
+		else{
+			alert(data.returnDesc);
+		}
+	})
+	.fail(function(jqXHR, textStatus, errorThrown){
+		alert("오류");
+	});
 }
 </script>
 </head>
@@ -207,7 +246,7 @@ function picDelete(){
 						<div class="form-group">
 							<label class="control-label">이미지 첨부</label>
 							<div>
-								<input type="file" id="file" class="form-control" name="file" style="width:80%"/>
+								<input type="file"  id="file"  class="form-control" multiple name="file" style="width:80%"/>
 							</div>
 						</div>
 						<input type="hidden" id="id" name="id" />

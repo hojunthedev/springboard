@@ -13,9 +13,11 @@
 <script src="/js/jquery-3.5.1.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script type="text/javascript" language="javascript" defer="defer">
+
 $( document ).ready(function(){
 	list();
 });
+
 function list(){
 	$.ajax({
 			url : "<c:url value='/list.do'/>",
@@ -29,14 +31,19 @@ function list(){
 			//alert(data.list.length);
 			$('#list').children().remove();
 			for(var i=0;i<data.list.length;i++)
-				{
-					var contents = data.list[i].contents;
-					contents = contents.replace(/\n/gi, '\\n');
-					var txt = "<tr onclick=\"detail('"+data.list[i].id+"','"+data.list[i].title+"','"+contents+"','"+data.list[i].fname+"');\">";
-					txt += "<td>" + data.list[i].title + "<span style=\"float:right\">" + data.list[i].date +"<td/>";
-					txt += "</tr>"
-					$('#list').append(txt);
-				}
+			{
+				var contents = data.list[i].contents;
+				contents = contents.replace(/\n/gi, '\\n');
+				var txt = "<tr onclick=\"detail('"+data.list[i].id+"','"+data.list[i].title+"','"+contents+"','"+data.list[i].fname+"');\">";
+				txt += "<td>" + data.list[i].title + "<span style=\"float:right\">" + data.list[i].date +"<td/>";
+				txt += "</tr>"
+				$('#list').append(txt);
+				
+				//if(i == 0){
+				//	detail(data.list[i].id, data.list[i].title, contents.replace(/\\n/gi, '\n'), data.list[i].fname);
+				//}
+			}
+			
 		})
 		.fail(function(jqXHR, textStatus, errorThrown){
 			alert("오류");
@@ -66,7 +73,9 @@ function getImg(fname){
 		//data : $("#form1").serialize()	//폼데이터 넘기는 법. #form1은 폼의 id
 	})
 	.done(function(data){
+		
 		$('#img').attr("src", "data:image/jpeg;base64," + data);
+		
 	})
 	.fail(function(jqXHR, textStatus, errorThrown){
 		alert("오류");
@@ -158,7 +167,41 @@ function del(){
 	});
 }
 function picDelete(){
-	alert('delete image');
+	//alert('delete image');
+	if($('#id').val() == ''){
+		alert("삭제할 대상이 존재하지 않습니다.");
+		return;
+	}
+	if(!confirm("그림을 삭제 하시겠습니까?")){
+		return;
+	}
+	
+	var formData = new FormData();
+	formData.append('id', $('#id').val());
+	formData.append('title', $('#title').val());  
+	formData.append('contents', $('#contents').val());
+	
+	$.ajax({
+		url : "<c:url value='/delImg.do'/>",
+		processData : false, //0529 processDate -> processData
+		contentType : false,
+		method : "POST",
+		cache : false,
+		data : formData
+		//data : $("#form1").serialize()	//폼데이터 넘기는 법. #form1은 폼의 id
+	})
+	.done(function(data){
+		if(data.returnCode =='success'){
+			list();
+			alert("정상적으로 삭제되었습니다.");
+		}
+		else{
+			alert(data.returnDesc);
+		}
+	})
+	.fail(function(jqXHR, textStatus, errorThrown){
+		alert("오류");
+	});
 }
 </script>
 </head>
